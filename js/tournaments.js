@@ -31,8 +31,13 @@ let CURRENT = {
   const active = data.filter(t => t.status === "active");
 
   if (active.length === 0) {
-    container.innerHTML += "<p>No active tournaments.</p>";
+    const msg = document.createElement("p");
+    msg.innerText = "No active tournaments.";
+    msg.style.color = "#777";
+    msg.style.textAlign = "center";
+    container.appendChild(msg);
   }
+
 
 
   active.forEach(t => {
