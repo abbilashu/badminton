@@ -27,6 +27,12 @@ menuBtn.onclick = () => menu.classList.toggle("hidden");
       const card = document.createElement("div");
       card.className = "card";
       card.style.cursor = "pointer";
+      
+      // Apply rank styling
+      if (i === 0) card.classList.add("rank-1");
+      if (i === 1) card.classList.add("rank-2");
+      if (i === 2) card.classList.add("rank-3");
+
 
       card.innerHTML = `
         <strong>#${i + 1} ${name}</strong><br>
