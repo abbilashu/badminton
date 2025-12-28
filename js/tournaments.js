@@ -96,6 +96,24 @@ function openStartModal(players, tournaments) {
   const list = document.getElementById("playerSelect");
   list.innerHTML = "";
 
+  const createBtn = document.querySelector("#startModal .submit-btn");
+  createBtn.innerText = "Create Tournament";
+  createBtn.disabled = true;
+
+  function updateButton() {
+    const checked = document.querySelectorAll(
+      "#playerSelect input[type=checkbox]:checked"
+    ).length;
+
+    if (checked === 0) {
+      createBtn.innerText = "Create Tournament";
+      createBtn.disabled = true;
+    } else {
+      createBtn.innerText = `Create Tournament (${checked} players)`;
+      createBtn.disabled = checked < 4;
+    }
+  }
+
   Object.entries(players).forEach(([id, name]) => {
     const disabled = activePlayers.has(Number(id));
 
@@ -109,12 +127,18 @@ function openStartModal(players, tournaments) {
       </label>
     `;
 
+    const checkbox = row.querySelector("input");
+    checkbox.addEventListener("change", updateButton);
+
     list.appendChild(row);
   });
+
+  updateButton();
 
   document.getElementById("startBackdrop").classList.remove("hidden");
   document.getElementById("startModal").classList.remove("hidden");
 }
+
 
 function closeStartModal() {
   document.getElementById("startBackdrop").classList.add("hidden");
