@@ -37,10 +37,18 @@ let CURRENT = {
     const tCard = document.createElement("div");
     tCard.className = "card";
 
+    const allGamesComplete = t.currentGame > t.games.length;
+
     tCard.innerHTML = `
       <strong>Tournament ${t.tournamentId}</strong><br>
-      Current Game: ${t.currentGame}<br><br>
+      ${
+        allGamesComplete
+          ? "<span style='color:green;font-weight:bold;'>All Games Complete</span>"
+          : `Current Game: ${t.currentGame}`
+      }
+      <br><br>
     `;
+
 
     t.games.forEach(g => {
       const gameDiv = document.createElement("div");
