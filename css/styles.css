@@ -179,3 +179,17 @@ main {
 }
 
 
+.player-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+}
+
+.player-stat:last-child {
+  border-bottom: none;
+}
+
+
+
