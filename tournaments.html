@@ -16,6 +16,29 @@
     <p class="loading">Loading tournaments…</p>
   </main>
 
+  <!-- SCORE MODAL -->
+  <div id="modalBackdrop" class="modal-backdrop hidden"></div>
+
+  <div id="scoreModal" class="modal hidden">
+    <h2 id="modalTitle"></h2>
+    <p id="modalTeams"></p>
+
+    <div class="score-row">
+      <button class="score-btn" onclick="changeScore('a', -1)">−</button>
+      <span id="scoreA">0</span>
+      <button class="score-btn" onclick="changeScore('a', 1)">+</button>
+    </div>
+
+    <div class="score-row">
+      <button class="score-btn" onclick="changeScore('b', -1)">−</button>
+      <span id="scoreB">0</span>
+      <button class="score-btn" onclick="changeScore('b', 1)">+</button>
+    </div>
+
+    <button class="submit-btn" onclick="saveScore()">Save Score</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  </div>
+
   <script src="js/api.js"></script>
   <script src="js/tournaments.js"></script>
 </body>
