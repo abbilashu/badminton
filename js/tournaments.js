@@ -8,16 +8,28 @@ let CURRENT = {
   completeTournamentId: null
 };
 
+/****************
+ * RENDER PAGE
+ ****************/
+
 (async function render() {
   const players = await loadPlayers();
   const data = await apiGet("getTournaments");
 
   container.innerHTML = "";
 
+  // ✅ START TOURNAMENT BUTTON
+  const startBtn = document.createElement("button");
+  startBtn.className = "start-btn";
+  startBtn.innerText = "+ Start New Tournament";
+  startBtn.onclick = () => openStartModal(players, data);
+
+  container.appendChild(startBtn);
+
   const active = data.filter(t => t.status === "active");
 
   if (active.length === 0) {
-    container.innerHTML = "<p>No active tournaments.</p>";
+    container.innerHTML += "<p>No active tournaments.</p>";
     return;
   }
 
@@ -48,7 +60,6 @@ let CURRENT = {
       tCard.appendChild(gameDiv);
     });
 
-    // ✅ COMPLETE BUTTON
     const completeBtn = document.createElement("button");
     completeBtn.className = "complete-btn";
     completeBtn.innerText = "Complete Tournament";
@@ -58,6 +69,75 @@ let CURRENT = {
     container.appendChild(tCard);
   });
 })();
+
+/****************
+ * START TOURNAMENT
+ ****************/
+
+function openStartModal(players, tournaments) {
+  const activePlayers = new Set();
+
+  tournaments
+    .filter(t => t.status === "active")
+    .forEach(t => {
+      t.games.forEach(g => {
+        [...g.team1, ...g.team2].forEach(p => activePlayers.add(p));
+      });
+    });
+
+  const list = document.getElementById("playerSelect");
+  list.innerHTML = "";
+
+  Object.entries(players).forEach(([id, name]) => {
+    const disabled = activePlayers.has(Number(id));
+
+    const row = document.createElement("div");
+    row.style.marginBottom = "8px";
+
+    row.innerHTML = `
+      <label>
+        <input type="checkbox" value="${id}" ${disabled ? "disabled" : ""}>
+        ${name} ${disabled ? "(in active tournament)" : ""}
+      </label>
+    `;
+
+    list.appendChild(row);
+  });
+
+  document.getElementById("startBackdrop").classList.remove("hidden");
+  document.getElementById("startModal").classList.remove("hidden");
+}
+
+function closeStartModal() {
+  document.getElementById("startBackdrop").classList.add("hidden");
+  document.getElementById("startModal").classList.add("hidden");
+}
+
+async function createTournament() {
+  const checkboxes = document.querySelectorAll(
+    "#playerSelect input[type=checkbox]:checked"
+  );
+
+  const playerIds = Array.from(checkboxes).map(cb => Number(cb.value));
+
+  if (playerIds.length < 4) {
+    alert("Select at least 4 players.");
+    return;
+  }
+
+  const res = await apiPost({
+    action: "startTournament",
+    playerIds
+  });
+
+  if (res.error) {
+    alert(res.error);
+    return;
+  }
+
+  closeStartModal();
+  location.reload();
+}
 
 /****************
  * SCORE MODAL
