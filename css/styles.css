@@ -70,7 +70,9 @@ main {
 
 .hidden {
   display: none;
+  pointer-events: none;
 }
+
 
 
 .game-card {
@@ -80,6 +82,7 @@ main {
   margin-bottom: 8px;
   border: 1px solid #ddd;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .game-card.current {
