@@ -8,7 +8,12 @@ const menu = document.getElementById("menu");
 menuBtn.onclick = () => menu.classList.toggle("hidden");
 
 (async function () {
-  PLAYERS = await loadPlayers();
+  const playersArray = await loadPlayers();
+  PLAYERS = {};
+  playersArray.forEach(p => {
+    PLAYERS[p.id] = p;
+  });
+
   STATS = await apiGet("getRankings");
 
   leaderboardEl.innerHTML = "";
