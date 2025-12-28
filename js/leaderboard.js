@@ -8,11 +8,8 @@ const menu = document.getElementById("menu");
 menuBtn.onclick = () => menu.classList.toggle("hidden");
 
 (async function () {
-  const playersArray = await loadPlayers();
-  PLAYERS = {};
-  playersArray.forEach(p => {
-    PLAYERS[p.id] = p;
-  });
+  // ✅ load players as-is
+  PLAYERS = await loadPlayers();
 
   STATS = await apiGet("getRankings");
 
@@ -21,7 +18,11 @@ menuBtn.onclick = () => menu.classList.toggle("hidden");
   STATS
     .sort((a, b) => b.winPct - a.winPct)
     .forEach((p, i) => {
-      const name = PLAYERS[p.playerId]?.name || `Player ${p.playerId}`;
+      const player = PLAYERS[p.playerId];
+      const name =
+        typeof player === "string"
+          ? player
+          : player?.name || `Player ${p.playerId}`;
 
       const card = document.createElement("div");
       card.className = "card";
@@ -40,13 +41,23 @@ menuBtn.onclick = () => menu.classList.toggle("hidden");
     });
 })();
 
+/********************
+ * PLAYER MODAL
+ ********************/
+
 function openPlayerModal(playerStat) {
   const player = PLAYERS[playerStat.playerId];
   if (!player) return;
 
-  const emoji = player.gender === "M" ? "♂️" : "♀️";
+  const gender = typeof player === "string" ? null : player.gender;
+  const name = typeof player === "string" ? player : player.name;
 
-  document.getElementById("playerName").innerText = player.name;
+  const emoji =
+    gender === "M" ? "♂️" :
+    gender === "F" ? "♀️" :
+    "";
+
+  document.getElementById("playerName").innerText = name;
   document.getElementById("playerEmoji").innerText = emoji;
 
   document.getElementById("playerStats").innerHTML = `
