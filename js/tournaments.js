@@ -1,6 +1,13 @@
 const container = document.getElementById("tournaments");
 
-(async function () {
+let CURRENT = {
+  tournamentId: null,
+  gameNumber: null,
+  scoreA: 0,
+  scoreB: 0
+};
+
+(async function render() {
   const players = await loadPlayers();
   const data = await apiGet("getTournaments");
 
@@ -14,32 +21,81 @@ const container = document.getElementById("tournaments");
   }
 
   active.forEach(t => {
-    const card = document.createElement("div");
-    card.className = "card";
+    const tCard = document.createElement("div");
+    tCard.className = "card";
 
-    let gamesHtml = "";
+    tCard.innerHTML = `
+      <strong>Tournament ${t.tournamentId}</strong><br>
+      Current Game: ${t.currentGame}<br><br>
+    `;
 
     t.games.forEach(g => {
-      const isCurrent = g.gameNumber === t.currentGame;
+      const gameDiv = document.createElement("div");
+      gameDiv.className = "game-card" + (g.gameNumber === t.currentGame ? " current" : "");
 
       const team1 = g.team1.map(id => players[id]).join(" + ");
       const team2 = g.team2.map(id => players[id]).join(" + ");
+      const score = g.scoreTeam1 ? ` — ${g.scoreTeam1}:${g.scoreTeam2}` : "";
 
-      gamesHtml += `
-        <div style="margin-bottom:8px; ${isCurrent ? 'font-weight:bold;' : ''}">
-          Game ${g.gameNumber}: 
-          ${team1} vs ${team2}
-          ${g.scoreTeam1 ? ` — ${g.scoreTeam1}:${g.scoreTeam2}` : ""}
-        </div>
+      gameDiv.innerHTML = `
+        Game ${g.gameNumber}<br>
+        ${team1} vs ${team2}${score}
       `;
+
+      gameDiv.onclick = () => openModal(t, g, team1, team2);
+      tCard.appendChild(gameDiv);
     });
 
-    card.innerHTML = `
-      <strong>Tournament ${t.tournamentId}</strong><br>
-      Current Game: ${t.currentGame}<br><br>
-      ${gamesHtml}
-    `;
-
-    container.appendChild(card);
+    container.appendChild(tCard);
   });
 })();
+
+/***************
+ * MODAL LOGIC
+ ***************/
+
+function openModal(tournament, game, team1, team2) {
+  CURRENT.tournamentId = tournament.tournamentId;
+  CURRENT.gameNumber = game.gameNumber;
+  CURRENT.scoreA = game.scoreTeam1 || 0;
+  CURRENT.scoreB = game.scoreTeam2 || 0;
+
+  document.getElementById("modalTitle").innerText =
+    `Game ${game.gameNumber}`;
+  document.getElementById("modalTeams").innerText =
+    `${team1} vs ${team2}`;
+
+  document.getElementById("scoreA").innerText = CURRENT.scoreA;
+  document.getElementById("scoreB").innerText = CURRENT.scoreB;
+
+  document.getElementById("modalBackdrop").classList.remove("hidden");
+  document.getElementById("scoreModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modalBackdrop").classList.add("hidden");
+  document.getElementById("scoreModal").classList.add("hidden");
+}
+
+function changeScore(team, delta) {
+  if (team === "a") {
+    CURRENT.scoreA = Math.max(0, CURRENT.scoreA + delta);
+    document.getElementById("scoreA").innerText = CURRENT.scoreA;
+  } else {
+    CURRENT.scoreB = Math.max(0, CURRENT.scoreB + delta);
+    document.getElementById("scoreB").innerText = CURRENT.scoreB;
+  }
+}
+
+async function saveScore() {
+  await apiPost({
+    action: "submitScore",
+    tournamentId: CURRENT.tournamentId,
+    gameNumber: CURRENT.gameNumber,
+    scoreTeam1: CURRENT.scoreA,
+    scoreTeam2: CURRENT.scoreB
+  });
+
+  closeModal();
+  location.reload(); // simple + safe for now
+}
