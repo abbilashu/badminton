@@ -191,5 +191,29 @@ main {
   border-bottom: none;
 }
 
+.rank-1 {
+  background: linear-gradient(
+    135deg,
+    #fff7cc,
+    #f5e6a0
+  );
+}
+
+.rank-2 {
+  background: linear-gradient(
+    135deg,
+    #f5f5f5,
+    #e0e0e0
+  );
+}
+
+.rank-3 {
+  background: linear-gradient(
+    135deg,
+    #fbe5d6,
+    #e7c3a5
+  );
+}
+
 
 
