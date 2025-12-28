@@ -1,6 +1,9 @@
 const container = document.getElementById("tournaments");
 
-apiGet("getTournaments").then(data => {
+(async function () {
+  const players = await loadPlayers();
+  const data = await apiGet("getTournaments");
+
   container.innerHTML = "";
 
   const active = data.filter(t => t.status === "active");
@@ -18,10 +21,14 @@ apiGet("getTournaments").then(data => {
 
     t.games.forEach(g => {
       const isCurrent = g.gameNumber === t.currentGame;
+
+      const team1 = g.team1.map(id => players[id]).join(" + ");
+      const team2 = g.team2.map(id => players[id]).join(" + ");
+
       gamesHtml += `
         <div style="margin-bottom:8px; ${isCurrent ? 'font-weight:bold;' : ''}">
           Game ${g.gameNumber}: 
-          ${g.team1.join(" + ")} vs ${g.team2.join(" + ")}
+          ${team1} vs ${team2}
           ${g.scoreTeam1 ? ` — ${g.scoreTeam1}:${g.scoreTeam2}` : ""}
         </div>
       `;
@@ -35,4 +42,4 @@ apiGet("getTournaments").then(data => {
 
     container.appendChild(card);
   });
-});
+})();
