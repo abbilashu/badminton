@@ -133,7 +133,7 @@ main {
   left: 0;
   right: 0;
   background: white;
-  padding: 20px;
+  padding: 16px;
   border-radius: 16px 16px 0 0;
   z-index: 11;
 }
@@ -359,6 +359,37 @@ main {
 }
 
 
+/* ---------- PLAYER MODAL FIXED HEIGHT ---------- */
+
+#playerModal {
+  max-height: 80vh;               /* prevents jumping */
+  display: flex;
+  flex-direction: column;
+}
+
+/* stats + partners panels scroll internally */
+#playerStats,
+#playerPartners {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+/* ---------- PARTNERS TAB HEADINGS ---------- */
+
+.partners-title {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.05em;
+}
+
+.muted {
+  color: #777;
+  text-align: center;
+  margin: 8px 0;
+}
 
 
 
