@@ -250,6 +250,12 @@ function closeStartModal() {
 }
 
 async function createTournament() {
+  const btn = document.getElementById("createTournamentBtn");
+
+  // ✅ instant UI feedback
+  btn.disabled = true;
+  btn.innerText = "Creating…";
+
   const checkboxes = document.querySelectorAll(
     "#playerSelect input[type=checkbox]:checked"
   );
@@ -258,19 +264,36 @@ async function createTournament() {
 
   if (playerIds.length < 4) {
     alert("Select at least 4 players.");
+
+    // ❌ restore UI
+    btn.disabled = false;
+    btn.innerText = "Create Tournament";
     return;
   }
 
-  const res = await apiPost({ action: "startTournament", playerIds });
+  try {
+    const res = await apiPost({
+      action: "startTournament",
+      playerIds
+    });
 
-  if (res.error) {
-    alert(res.error);
-    return;
+    if (res.error) {
+      alert(res.error);
+      throw new Error(res.error);
+    }
+
+    closeStartModal();
+    location.reload();
+
+  } catch (err) {
+    console.error(err);
+
+    // ❌ restore UI if backend fails
+    btn.disabled = false;
+    btn.innerText = "Create Tournament";
   }
-
-  closeStartModal();
-  location.reload();
 }
+
 
 /****************
  * SCORE MODAL
