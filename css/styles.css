@@ -301,46 +301,42 @@ main {
   margin: 10px 0 16px;
 }
 
-/* Each player block */
 .player-stat {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-/* Player name */
 .stat-name {
-  font-weight: bold;
-  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
-/* Aligned stat grid */
 .stat-row {
   display: grid;
-  grid-template-columns: repeat(5, minmax(44px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(5, 36px);
+  gap: 4px;
   font-size: 13px;
 }
 
-/* Individual stat cell */
 .stat-row div {
   background: white;
-  border-radius: 6px;
-  padding: 6px 0;
+  border-radius: 5px;
+  padding: 4px 0;
   text-align: center;
   border: 1px solid #e5e7eb;
 }
 
-/* Stat label */
 .stat-row span {
   display: block;
-  font-size: 11px;
+  font-size: 10px;
   color: #6b7280;
 }
 
-/* Stat value */
 .stat-row strong {
-  font-size: 14px;
+  font-size: 13px;
   color: #111827;
 }
+
 
 
 
