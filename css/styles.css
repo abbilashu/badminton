@@ -337,6 +337,28 @@ main {
   color: #111827;
 }
 
+.modal-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  font-weight: bold;
+}
+
+.tab.active {
+  background: #0b6e4f;
+  color: white;
+  border-color: #0b6e4f;
+}
+
+
 
 
 
