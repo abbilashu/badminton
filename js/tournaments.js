@@ -308,17 +308,34 @@ function changeScore(team, delta) {
 }
 
 async function saveScore() {
-  await apiPost({
-    action: "submitScore",
-    tournamentId: CURRENT.tournamentId,
-    gameNumber: CURRENT.gameNumber,
-    scoreTeam1: CURRENT.scoreA,
-    scoreTeam2: CURRENT.scoreB
-  });
+  const btn = document.getElementById("saveScoreBtn");
 
-  closeModal();
-  location.reload();
+  // ✅ instant UI feedback
+  btn.disabled = true;
+  btn.innerText = "Saving…";
+
+  try {
+    await apiPost({
+      action: "submitScore",
+      tournamentId: CURRENT.tournamentId,
+      gameNumber: CURRENT.gameNumber,
+      scoreTeam1: CURRENT.scoreA,
+      scoreTeam2: CURRENT.scoreB
+    });
+
+    closeModal();
+    location.reload();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save score.");
+
+    // ❌ recover UI if backend fails
+    btn.disabled = false;
+    btn.innerText = "Save Score";
+  }
 }
+
 
 /***********************
  * COMPLETE / CANCEL
