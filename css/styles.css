@@ -271,13 +271,16 @@ main {
   font-size: 16px;
 }
 
+/* Tournament header row (ID + Stats button) */
 .tournament-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 6px;
 }
 
+/* Stats toggle button */
 .stats-btn {
   font-size: 14px;
   padding: 6px 10px;
@@ -285,7 +288,60 @@ main {
   background: #e6f2ee;
   color: #0b6e4f;
   border: 1px solid #0b6e4f;
+  cursor: pointer;
+  white-space: nowrap;
 }
+
+/* Boxed stats container */
+.tournament-stats {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 10px 0 16px;
+}
+
+/* Each player block */
+.player-stat {
+  margin-bottom: 12px;
+}
+
+/* Player name */
+.stat-name {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+/* Aligned stat grid */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(44px, 1fr));
+  gap: 6px;
+  font-size: 13px;
+}
+
+/* Individual stat cell */
+.stat-row div {
+  background: white;
+  border-radius: 6px;
+  padding: 6px 0;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+/* Stat label */
+.stat-row span {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Stat value */
+.stat-row strong {
+  font-size: 14px;
+  color: #111827;
+}
+
 
 
 
