@@ -338,24 +338,32 @@ main {
 
 .modal-tabs {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 12px;
 }
 
 .tab {
   flex: 1;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 12px;                 /* same as buttons */
+  border-radius: 8px;            /* same as buttons */
+  font-size: 15px;               /* matches visual weight */
+  font-weight: bold;
   border: 1px solid #ddd;
   background: #f3f3f3;
-  font-weight: bold;
+  color: #222;
+  cursor: pointer;
+
+  display: flex;                 /* centers text perfectly */
+  align-items: center;
+  justify-content: center;
 }
 
 .tab.active {
-  background: #0b6e4f;
+  background: #0b6e4f;           /* same green */
   color: white;
   border-color: #0b6e4f;
 }
+
 
 
 /* ---------- PLAYER MODAL FIXED HEIGHT ---------- */
