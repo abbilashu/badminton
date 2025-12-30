@@ -18,16 +18,23 @@
   </main>
 
   <!-- PLAYER DETAIL MODAL -->
-  <div id="playerBackdrop" class="modal-backdrop hidden"></div>
-
   <div id="playerModal" class="modal hidden">
     <h2 id="playerName"></h2>
     <p id="playerEmoji" style="font-size:32px; margin-top:0;"></p>
-
+  
+    <!-- TABS -->
+    <div class="modal-tabs">
+      <button id="tabStats" class="tab active">Stats</button>
+      <button id="tabPartners" class="tab">Partners</button>
+    </div>
+  
+    <!-- TAB CONTENT -->
     <div id="playerStats"></div>
-
+    <div id="playerPartners" class="hidden"></div>
+  
     <button class="cancel-btn" onclick="closePlayerModal()">Close</button>
   </div>
+
 
   <nav id="menu" class="hidden">
     <a href="leaderboard.html">Leaderboard</a>
