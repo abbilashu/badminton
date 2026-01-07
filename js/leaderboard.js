@@ -1,6 +1,7 @@
 let PLAYERS = {};
 let STATS = [];
-let ALL_TOURNAMENTS = [];
+let ALL_TOURNAMENTS = null;
+let TOURNAMENTS_LOADED_AT = 0;
 
 const leaderboardEl = document.getElementById("leaderboard");
 const menuBtn = document.getElementById("menuBtn");
@@ -8,17 +9,34 @@ const menu = document.getElementById("menu");
 
 menuBtn.onclick = () => menu.classList.toggle("hidden");
 
-(async function () {
-  PLAYERS = await loadPlayers();
-  STATS = await apiGet("getRankings");
-  ALL_TOURNAMENTS = await apiGet("getTournaments");
+/********************
+ * INITIAL LOAD
+ ********************/
 
+(async function initLeaderboard() {
+  // 🔥 Load players + rankings in parallel
+  const [players, rankings] = await Promise.all([
+    loadPlayers(),
+    apiGet("getRankings")
+  ]);
+
+  PLAYERS = players;
+  STATS = rankings;
+
+  renderLeaderboard();
+})();
+
+/********************
+ * RENDER LEADERBOARD
+ ********************/
+
+function renderLeaderboard() {
   leaderboardEl.innerHTML = "";
 
   STATS
     .sort((a, b) => b.winPct - a.winPct)
     .forEach((p, i) => {
-      const name = PLAYERS[p.playerId];
+      const name = PLAYERS[p.playerId] || `Player ${p.playerId}`;
 
       const card = document.createElement("div");
       card.className = "card";
@@ -37,29 +55,31 @@ menuBtn.onclick = () => menu.classList.toggle("hidden");
       card.onclick = () => openPlayerModal(p);
       leaderboardEl.appendChild(card);
     });
-})();
+}
 
 /********************
  * PLAYER MODAL
  ********************/
 
 function openPlayerModal(playerStat) {
-  const player = PLAYERS[playerStat.playerId];
-  if (!player) return;
+  const playerName = PLAYERS[playerStat.playerId];
+  if (!playerName) return;
 
-  document.getElementById("playerName").innerText = player;
+  document.getElementById("playerName").innerText = playerName;
   document.getElementById("playerEmoji").innerText = "";
 
   const tabStats = document.getElementById("tabStats");
-  const tabPartners = document.getElementById("tabPartners");
+  const tabMatchups = document.getElementById("tabPartners");
   const statsEl = document.getElementById("playerStats");
-  const partnersEl = document.getElementById("playerPartners");
+  const matchupsEl = document.getElementById("playerPartners");
 
+  // Reset tabs
   tabStats.classList.add("active");
-  tabPartners.classList.remove("active");
+  tabMatchups.classList.remove("active");
   statsEl.classList.remove("hidden");
-  partnersEl.classList.add("hidden");
+  matchupsEl.classList.add("hidden");
 
+  // Stats content
   statsEl.innerHTML = `
     <div class="player-stat"><span>Games Played</span><span>${playerStat.gamesPlayed}</span></div>
     <div class="player-stat"><span>Wins</span><span>${playerStat.wins}</span></div>
@@ -69,20 +89,23 @@ function openPlayerModal(playerStat) {
     <div class="player-stat"><span>Points Against</span><span>${playerStat.pa}</span></div>
   `;
 
-  partnersEl.innerHTML = renderPartnerStats(playerStat.playerId);
-
+  // Tabs
   tabStats.onclick = () => {
     tabStats.classList.add("active");
-    tabPartners.classList.remove("active");
+    tabMatchups.classList.remove("active");
     statsEl.classList.remove("hidden");
-    partnersEl.classList.add("hidden");
+    matchupsEl.classList.add("hidden");
   };
 
-  tabPartners.onclick = () => {
-    tabPartners.classList.add("active");
+  tabMatchups.onclick = async () => {
+    tabMatchups.classList.add("active");
     tabStats.classList.remove("active");
-    partnersEl.classList.remove("hidden");
+    matchupsEl.classList.remove("hidden");
     statsEl.classList.add("hidden");
+
+    // Lazy-load tournaments only once (or every 5 min)
+    await loadTournamentsIfNeeded();
+    matchupsEl.innerHTML = renderMatchupStats(playerStat.playerId);
   };
 
   document.getElementById("playerBackdrop").classList.remove("hidden");
@@ -95,54 +118,70 @@ function closePlayerModal() {
 }
 
 /********************
- * PARTNER + OPPONENT STATS
+ * TOURNAMENT CACHE
  ********************/
 
-function renderPartnerStats(playerId) {
+async function loadTournamentsIfNeeded() {
+  const FIVE_MIN = 5 * 60 * 1000;
+  const now = Date.now();
+
+  if (!ALL_TOURNAMENTS || now - TOURNAMENTS_LOADED_AT > FIVE_MIN) {
+    ALL_TOURNAMENTS = await apiGet("getTournaments");
+    TOURNAMENTS_LOADED_AT = now;
+  }
+}
+
+/********************
+ * MATCHUP STATS
+ ********************/
+
+function renderMatchupStats(playerId) {
   const partners = {};
   const opponents = {};
 
   ALL_TOURNAMENTS.forEach(t => {
     t.games.forEach(g => {
-      if (!Number.isFinite(g.scoreTeam1) || !Number.isFinite(g.scoreTeam2)) return;
-      if (g.scoreTeam1 === g.scoreTeam2) return;
-
+      if (
+        !Number.isFinite(g.scoreTeam1) ||
+        !Number.isFinite(g.scoreTeam2) ||
+        g.scoreTeam1 === g.scoreTeam2
+      ) return;
 
       const { team1, team2, scoreTeam1, scoreTeam2 } = g;
 
       // ---- PARTNERS ----
       if (team1.includes(playerId)) {
-        const partner = team1.find(p => p !== playerId);
-        if (partner) {
-          partners[partner] ??= { gp: 0, w: 0, l: 0 };
-          partners[partner].gp++;
-          scoreTeam1 > scoreTeam2 ? partners[partner].w++ : partners[partner].l++;
+        const p = team1.find(x => x !== playerId);
+        if (p) {
+          partners[p] ??= { gp: 0, w: 0, l: 0 };
+          partners[p].gp++;
+          scoreTeam1 > scoreTeam2 ? partners[p].w++ : partners[p].l++;
         }
       }
 
       if (team2.includes(playerId)) {
-        const partner = team2.find(p => p !== playerId);
-        if (partner) {
-          partners[partner] ??= { gp: 0, w: 0, l: 0 };
-          partners[partner].gp++;
-          scoreTeam2 > scoreTeam1 ? partners[partner].w++ : partners[partner].l++;
+        const p = team2.find(x => x !== playerId);
+        if (p) {
+          partners[p] ??= { gp: 0, w: 0, l: 0 };
+          partners[p].gp++;
+          scoreTeam2 > scoreTeam1 ? partners[p].w++ : partners[p].l++;
         }
       }
 
       // ---- OPPONENTS ----
       if (team1.includes(playerId)) {
-        team2.forEach(opp => {
-          opponents[opp] ??= { gp: 0, w: 0, l: 0 };
-          opponents[opp].gp++;
-          scoreTeam1 > scoreTeam2 ? opponents[opp].w++ : opponents[opp].l++;
+        team2.forEach(o => {
+          opponents[o] ??= { gp: 0, l: 0 };
+          opponents[o].gp++;
+          if (scoreTeam1 < scoreTeam2) opponents[o].l++;
         });
       }
 
       if (team2.includes(playerId)) {
-        team1.forEach(opp => {
-          opponents[opp] ??= { gp: 0, w: 0, l: 0 };
-          opponents[opp].gp++;
-          scoreTeam2 > scoreTeam1 ? opponents[opp].w++ : opponents[opp].l++;
+        team1.forEach(o => {
+          opponents[o] ??= { gp: 0, l: 0 };
+          opponents[o].gp++;
+          if (scoreTeam2 < scoreTeam1) opponents[o].l++;
         });
       }
     });
@@ -150,8 +189,8 @@ function renderPartnerStats(playerId) {
 
   const topPartners = Object.entries(partners)
     .filter(([_, s]) => s.gp >= 2)
-    .map(([pid, s]) => ({
-      name: PLAYERS[pid],
+    .map(([id, s]) => ({
+      name: PLAYERS[id],
       w: s.w,
       l: s.l,
       pct: s.w / s.gp
@@ -161,13 +200,13 @@ function renderPartnerStats(playerId) {
 
   const toughestOpponents = Object.entries(opponents)
     .filter(([_, s]) => s.gp >= 2 && s.l > 0)
-    .map(([pid, s]) => ({
-      name: PLAYERS[pid],
-      w: s.w,
+    .map(([id, s]) => ({
+      name: PLAYERS[id],
       l: s.l,
-      lossPct: s.l / s.gp
+      gp: s.gp,
+      pct: s.l / s.gp
     }))
-    .sort((a, b) => b.lossPct - a.lossPct)
+    .sort((a, b) => b.pct - a.pct)
     .slice(0, 3);
 
   let html = `<h3 class="partners-title">Favourite Partners</h3>`;
@@ -187,7 +226,7 @@ function renderPartnerStats(playerId) {
     ? toughestOpponents.map(o => `
         <div class="player-stat">
           <span><strong>${o.name}</strong></span>
-          <span>${o.w}–${o.l} (${(o.lossPct * 100).toFixed(0)}%)</span>
+          <span>${o.l} losses (${(o.pct * 100).toFixed(0)}%)</span>
         </div>
       `).join("")
     : `<p class="muted">No opponent data yet.</p>`;
