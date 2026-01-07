@@ -347,7 +347,7 @@ async function saveScore() {
     });
 
     closeModal();
-    location.reload();
+    render();
 
   } catch (err) {
     console.error(err);
