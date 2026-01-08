@@ -383,6 +383,17 @@ function openCancelModal(tournamentId) {
   document.getElementById("cancelModal").classList.remove("hidden");
 }
 
+function closeCompleteModal() {
+  document.getElementById("completeBackdrop").classList.add("hidden");
+  document.getElementById("completeModal").classList.add("hidden");
+}
+
+function closeCancelModal() {
+  document.getElementById("cancelBackdrop").classList.add("hidden");
+  document.getElementById("cancelModal").classList.add("hidden");
+}
+
+
 
 async function confirmCompleteTournament() {
   await apiPost({
