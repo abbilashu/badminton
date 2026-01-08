@@ -409,7 +409,7 @@ async function confirmCompleteTournament() {
     });
 
     closeCompleteModal();
-    await render();
+    location.reload();
 
   } catch (err) {
     console.error(err);
@@ -436,7 +436,7 @@ async function confirmCancelTournament() {
     });
 
     closeCancelModal();
-    await render();
+    location.reload();
 
   } catch (err) {
     console.error(err);
