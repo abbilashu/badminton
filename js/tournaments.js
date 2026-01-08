@@ -323,9 +323,15 @@ function openScoreModal(tournament, game, team1, team2) {
   document.getElementById("scoreA").innerText = CURRENT.scoreA;
   document.getElementById("scoreB").innerText = CURRENT.scoreB;
 
+  // ✅ reset save button state
+  const saveBtn = document.getElementById("saveScoreBtn");
+  saveBtn.disabled = false;
+  saveBtn.innerText = "Save Score";
+
   document.getElementById("modalBackdrop").classList.remove("hidden");
   document.getElementById("scoreModal").classList.remove("hidden");
 }
+
 
 function closeModal() {
   document.getElementById("modalBackdrop").classList.add("hidden");
