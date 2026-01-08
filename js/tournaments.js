@@ -396,26 +396,58 @@ function closeCancelModal() {
 
 
 async function confirmCompleteTournament() {
-  await apiPost({
-    action: "completeTournament",
-    tournamentId: CURRENT.completeTournamentId
-  });
+  const btn = document.querySelector("#completeModal .success-btn");
 
-  closeCompleteModal();
-  await getTournamentsCached(true);
-  await render();
+  // ✅ instant UI feedback
+  btn.disabled = true;
+  btn.innerText = "Completing…";
+
+  try {
+    await apiPost({
+      action: "completeTournament",
+      tournamentId: CURRENT.completeTournamentId
+    });
+
+    closeCompleteModal();
+    await render();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to complete tournament.");
+
+    // ❌ restore UI on failure
+    btn.disabled = false;
+    btn.innerText = "Complete Tournament";
+  }
 }
+
 
 async function confirmCancelTournament() {
-  await apiPost({
-    action: "cancelTournament",
-    tournamentId: CURRENT.cancelTournamentId
-  });
+  const btn = document.querySelector("#cancelModal .danger-btn");
 
-  closeCancelModal();
-  await getTournamentsCached(true);
-  await render();
+  // ✅ instant UI feedback
+  btn.disabled = true;
+  btn.innerText = "Cancelling…";
+
+  try {
+    await apiPost({
+      action: "cancelTournament",
+      tournamentId: CURRENT.cancelTournamentId
+    });
+
+    closeCancelModal();
+    await render();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to cancel tournament.");
+
+    // ❌ restore UI on failure
+    btn.disabled = false;
+    btn.innerText = "Cancel Tournament";
+  }
 }
+
 
 // ✅ initial load
 render();
