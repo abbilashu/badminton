@@ -371,6 +371,19 @@ function changeScore(team, delta) {
  * COMPLETE / CANCEL
  ***********************/
 
+function openCompleteModal(tournamentId) {
+  CURRENT.completeTournamentId = tournamentId;
+  document.getElementById("completeBackdrop").classList.remove("hidden");
+  document.getElementById("completeModal").classList.remove("hidden");
+}
+
+function openCancelModal(tournamentId) {
+  CURRENT.cancelTournamentId = tournamentId;
+  document.getElementById("cancelBackdrop").classList.remove("hidden");
+  document.getElementById("cancelModal").classList.remove("hidden");
+}
+
+
 async function confirmCompleteTournament() {
   await apiPost({
     action: "completeTournament",
