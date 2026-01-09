@@ -1,9 +1,6 @@
-let PLAYERS = {};
-
 const container = document.getElementById("achievements");
 
 (async function renderAchievements() {
-  PLAYERS = await loadPlayers();
   const rows = await apiGet("getAchievements");
 
   container.innerHTML = "";
@@ -52,10 +49,9 @@ function renderTop3({ title, subtitle, rows, valueKey }) {
     html += `<p class="muted">No data yet.</p>`;
   } else {
     top.forEach((r, i) => {
-      const name = PLAYERS[r.playerId] || `Player ${r.playerId}`;
       html += `
         <div class="player-stat">
-          <span>#${i + 1} ${name}</span>
+          <span>#${i + 1} ${r.name}</span>
           <strong>${r[valueKey]}</strong>
         </div>
       `;
