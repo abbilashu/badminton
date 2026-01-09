@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achievements</title>
+  <link rel="apple-touch-icon" href="badmintonicon.png">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="top-bar">
+    <h1>🏅 Achievements</h1>
+    <button id="menuBtn">☰</button>
+  </header>
+
+  <main id="achievements">
+    <p class="loading">Loading achievements…</p>
+  </main>
+
+  <nav id="menu" class="hidden">
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="tournaments.html">Tournaments</a>
+    <a href="players.html">Players</a>
+    <a href="achievements.html">Achievements</a>
+  </nav>
+
+  <script src="js/api.js"></script>
+  <script src="js/achievements.js"></script>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const menu = document.getElementById("menu");
+    menuBtn.onclick = () => menu.classList.toggle("hidden");
+  </script>
+</body>
+</html>
