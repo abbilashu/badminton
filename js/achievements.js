@@ -30,7 +30,7 @@ const container = document.getElementById("achievements");
     // STEP 6: Top Duos (by highest win %)
   renderTopDuos({
     title: "🤝 Top Duos",
-    subtitle: "Highest win % (min 3 games together)",
+    subtitle: "Highest win %",
     duos,
     minGames: 3
   });
