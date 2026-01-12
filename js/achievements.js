@@ -27,6 +27,14 @@ const container = document.getElementById("achievements");
     valueKey: "longestWinStreak"
   });
 
+    // STEP 6: Top Duos (by highest win %)
+  renderTopDuos({
+    title: "🤝 Top Duos",
+    subtitle: "Highest win % (min 3 games together)",
+    duos,
+    minGames: 3
+  });
+
   renderTop3({
     title: "🧱 Ever-Present",
     subtitle: "Most games played",
@@ -34,13 +42,6 @@ const container = document.getElementById("achievements");
     valueKey: "gamesPlayed"
   });
 
-  // STEP 6: Top Duos (by highest win %)
-  renderTopDuos({
-    title: "🤝 Top Duos",
-    subtitle: "Highest win % (min 3 games together)",
-    duos,
-    minGames: 3
-  });
 })();
 
 
