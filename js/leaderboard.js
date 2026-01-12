@@ -59,7 +59,7 @@ function renderLeaderboard() {
       card.innerHTML = `
         <strong>#${i + 1} ${name}</strong><br>
         Win PCT: ${(p.winPct * 100).toFixed(1)}%<br>
-        GP: ${p.gamesPlayed} · PD: ${pd > 0 ? "+" : ""}${pd}
+        GP: ${p.gamesPlayed} || PD: ${pd > 0 ? "+" : ""}${pd}
       `;
 
 
