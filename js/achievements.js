@@ -105,11 +105,13 @@ function renderTopDuos({ title, subtitle, duos, minGames }) {
       const name1 = PLAYERS[d.p1] || `Player ${d.p1}`;
       const name2 = PLAYERS[d.p2] || `Player ${d.p2}`;
       const pct = Math.round(d.winPct * 100);
+      const losses = d.gamesPlayed - d.wins;
+
 
       html += `
         <div class="player-stat">
           <span>#${i + 1} ${name1} & ${name2}</span>
-          <strong>${pct}%</strong>
+          <strong>${d.wins}–${losses} (${pct}%)</strong>
         </div>
       `;
     });
