@@ -5,7 +5,7 @@ function toggleLocationMenu() {
 }
 
 function switchLocation(city) {
-  if (city === "pickering") {
-    window.location.href = "https://badmintonleague.github.io/pickering/leaderboard.html";
+  if (city === "scarborough") {
+    window.location.href = "https://badmintonleague.github.io/scarborough/leaderboard.html";
   }
 }
