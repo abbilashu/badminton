@@ -64,7 +64,7 @@ function renderTop3({ title, subtitle, rows, valueKey }) {
   const top = rows
     .filter(r => Number(r[valueKey]) > 0)
     .sort((a, b) => b[valueKey] - a[valueKey])
-    .slice(0, 3);
+    .slice(0, 5);
 
   let html = `
     <h3>${title}</h3>
@@ -100,7 +100,7 @@ function renderTopDuos({ title, subtitle, duos, minGames }) {
       (b.wins - a.wins) ||
       (b.gamesPlayed - a.gamesPlayed)
     )
-    .slice(0, 3);
+    .slice(0, 5);
 
   let html = `
     <h3>${title}</h3>
